@@ -1,0 +1,73 @@
+# depslib dependency file v1.0
+1446897080 source:/home/qianghaohao/Code::BocksProgram/server/commond.c
+	"command.h"
+
+1446827408 /home/qianghaohao/Code::BocksProgram/server/command.h
+	"common.h"
+
+1446897118 /home/qianghaohao/Code::BocksProgram/server/common.h
+	<stdio.h>
+	<unistd.h>
+	<stdlib.h>
+	<string.h>
+	<strings.h>
+	<netinet/in.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<pthread.h>
+	<malloc.h>
+	<dirent.h>
+	<sys/stat.h>
+	<fcntl.h>
+
+1446897828 source:/home/qianghaohao/Code::BocksProgram/server/main.c
+	"command.h"
+
+1447160379 source:/home/qianghaohao/CBProgram/server/commond.c
+	"command.h"
+
+1447143322 /home/qianghaohao/CBProgram/server/command.h
+	"common.h"
+
+1446897118 /home/qianghaohao/CBProgram/server/common.h
+	<stdio.h>
+	<unistd.h>
+	<stdlib.h>
+	<string.h>
+	<strings.h>
+	<netinet/in.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<pthread.h>
+	<malloc.h>
+	<dirent.h>
+	<sys/stat.h>
+	<fcntl.h>
+
+1447165796 source:/home/qianghaohao/CBProgram/server/main.c
+	"command.h"
+
+1447256367 source:/home/qianghaohao/file-transfer/server/commond.c
+	"command.h"
+
+1447256306 /home/qianghaohao/file-transfer/server/command.h
+	"common.h"
+
+1446897118 /home/qianghaohao/file-transfer/server/common.h
+	<stdio.h>
+	<unistd.h>
+	<stdlib.h>
+	<string.h>
+	<strings.h>
+	<netinet/in.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<pthread.h>
+	<malloc.h>
+	<dirent.h>
+	<sys/stat.h>
+	<fcntl.h>
+
+1447252240 source:/home/qianghaohao/file-transfer/server/main.c
+	"command.h"
+

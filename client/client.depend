@@ -1,0 +1,97 @@
+# depslib dependency file v1.0
+1446906894 source:/home/qianghaohao/Code::BocksProgram/client/commond.c
+	"command.h"
+
+1446890237 /home/qianghaohao/Code::BocksProgram/client/command.h
+	"common.h"
+	"input.h"
+
+1446866204 /home/qianghaohao/Code::BocksProgram/client/common.h
+	<stdlib.h>
+	<sys/socket.h>
+	<sys/types.h>
+	<stdio.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<assert.h>
+	<string.h>
+	<unistd.h>
+	<strings.h>
+	<fcntl.h>
+	<sys/stat.h>
+
+1446866836 /home/qianghaohao/Code::BocksProgram/client/input.h
+	"common.h"
+
+1446887027 source:/home/qianghaohao/Code::BocksProgram/client/input.c
+	"command.h"
+	"input.h"
+
+1446908363 source:/home/qianghaohao/Code::BocksProgram/client/main.c
+	"command.h"
+	"input.h"
+
+1447163705 source:/home/qianghaohao/CBProgram/client/commond.c
+	"command.h"
+
+1447156953 /home/qianghaohao/CBProgram/client/command.h
+	"common.h"
+	"input.h"
+
+1446866204 /home/qianghaohao/CBProgram/client/common.h
+	<stdlib.h>
+	<sys/socket.h>
+	<sys/types.h>
+	<stdio.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<assert.h>
+	<string.h>
+	<unistd.h>
+	<strings.h>
+	<fcntl.h>
+	<sys/stat.h>
+
+1446866836 /home/qianghaohao/CBProgram/client/input.h
+	"common.h"
+
+1446887027 source:/home/qianghaohao/CBProgram/client/input.c
+	"command.h"
+	"input.h"
+
+1447158434 source:/home/qianghaohao/CBProgram/client/main.c
+	"command.h"
+	"input.h"
+
+1447256193 source:/home/qianghaohao/file-transfer/client/input.c
+	"command.h"
+	"input.h"
+
+1447256002 /home/qianghaohao/file-transfer/client/command.h
+	"common.h"
+	"input.h"
+
+1447256078 /home/qianghaohao/file-transfer/client/common.h
+	<stdlib.h>
+	<sys/socket.h>
+	<sys/types.h>
+	<stdio.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<assert.h>
+	<string.h>
+	<unistd.h>
+	<strings.h>
+	<fcntl.h>
+	<sys/stat.h>
+
+1446866836 /home/qianghaohao/file-transfer/client/input.h
+	"common.h"
+
+1447252572 source:/home/qianghaohao/file-transfer/client/main.c
+	"command.h"
+	"input.h"
+
+1447256433 source:/home/qianghaohao/file-transfer/client/commond.c
+	"command.h"
+
