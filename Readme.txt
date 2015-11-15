@@ -6,8 +6,9 @@ file-transfer system based on socket.
               还有待测试...
   -----------------------------------------------------------------------------------
 
-           Author:qianghaohao   Date:2015-11
-           Version: v1.0        Copyright:GPL
+           Author:qianghaohao                     Copyright (C) 2015
+           Version: v1.0, 11 November 2015        License:GPL
+           
 1.功能简介:支持文件下载和上传功能，客户端通过向服务的发送命令，服务端 接收到客户端命令后作出相应的处理. 功能详细列表: User commands:
 
 Example: command -option1 option2 ...
