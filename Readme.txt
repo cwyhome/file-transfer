@@ -17,11 +17,11 @@ Example: command -option1 option2 ...
 ------------------------------------------------------------------------------------
     get arg1 arg2        下载文件                     arg1:服务端路径, arg2:本地路径
     put arg1 arg2        上传文件                     arg1:本地路径, arg2:服务端路径
-    !cd arg1             切换到服务端目录             arg1:服务端路径 
-    !ls arg1             列出服务端目录内容           arg1:服务端路径 
+    !cd arg1             切换到服务端目录              arg1:服务端路径 
+    !ls arg1             列出服务端目录内容            arg1:服务端路径 
     connect arg1         连接服务器                   arg1:点分十进制IP地址 
     cd  arg1             切换本地目录                 arg1:本地路径 
-    ls  arg1             列出本地目录文件             arg1:本地路径 
+    ls  arg1             列出本地目录文件              arg1:本地路径 
     pwd                  显示当前本地目录 
     !pwd                 显示当前服务的目录 
     bye                  断开连接 
