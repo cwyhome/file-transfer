@@ -2,39 +2,39 @@
 #include "command.h"
 #include<errno.h>
 #include <netdb.h>
-void *handle_data(void *fd);  //ŽŠÀíÇëÇóÏß³Ì
+void *handle_data(void *fd);  //线程函数
 
 int main()
 {
     int res;
-    struct sockaddr_in s_addr, c_addr;     //°üº¬IPºÍ¶Ë¿ÚºÅµÄœá¹¹
-    int s_fd;            //·þÎñÆ÷ÃèÊö·û
+    struct sockaddr_in s_addr, c_addr;
+    int s_fd;            //服务端套接字描述符
 
     int s_len, c_len;
-    int *c_fd;            //¿Í»§¶ËÃèÊö·û
+    int *c_fd;            //客户端描述符指针
 
-     //œá¹¹ÄÚŽæ³õÊŒ»¯
+     //结构内存清零
     bzero(&s_addr, sizeof(s_addr));
     bzero(&c_addr, sizeof(c_addr));
 
     s_len = sizeof(s_addr);
     c_len = sizeof(c_addr);
 
-    s_addr.sin_family = AF_INET;                    //Ìî³äµØÖ·×å
-    s_addr.sin_port = htons(SOCK_PORT);            //Ìî³ä¶Ë¿ÚºÅ
-    s_addr.sin_addr.s_addr = htonl(INADDR_ANY);    //×Ô¶¯»ñÈ¡±ŸµØIPµØÖ·
-    //inet_pton(AF_INET, "127.0.0.1", &s_addr.sin_addr);   //ÊÖ¶¯Öž¶šIPµØÖ·
+    s_addr.sin_family = AF_INET;                    //TCP/IP地址族
+    s_addr.sin_port = htons(SOCK_PORT);            //端口号
+    s_addr.sin_addr.s_addr = htonl(INADDR_ANY);    //自动获取本机IP
+    //inet_pton(AF_INET, "127.0.0.1", &s_addr.sin_addr);   //手动指定IP
 
-    s_fd = socket(AF_INET, SOCK_STREAM, 0);                 //œšÁ¢Ì×œÓ×Ö
+    s_fd = socket(AF_INET, SOCK_STREAM, 0);                 //创建套接字描述符
 
-    res = bind(s_fd, (const struct sockaddr *)&s_addr, s_len);   //   °ó¶šÌ×œÓ×Ö
+    res = bind(s_fd, (const struct sockaddr *)&s_addr, s_len);   //   绑定套接字
     if(res == -1)
     {
         perror("bind failed!\n");
         exit(1);
     }
 
-    //   ŒàÌýÌ×œÓ×Ö
+    //   监听套接字
     res = listen(s_fd, MAX_CONN_LIMIT);
     if(res == -1)
      {
@@ -43,7 +43,7 @@ int main()
      }
 
 
-    //***********ŒàÌýÌ×œÓ×Ö²¢ŽŽœšÏß³Ì****************
+    //************服务端循环监听***************
     while(1)
     {
         c_fd = (int *)malloc(sizeof(c_fd));
@@ -64,14 +64,14 @@ int main()
         char *IP = inet_ntoa(c_addr.sin_addr);     //显示用户名
         if (IP)
         {
-            printf("USER: %s connected...\n", IP);
+            printf("USER: %s connected...\n", IP);  //打印连接到服务器客户端的IP
         }
         else
         {
             continue;
         }
 
-        pthread_t pth;        //œø³Ì±êÊ¶
+        pthread_t pth;        //线程标识
         if (pthread_create(&pth, NULL, handle_data, c_fd))
         {
              fprintf(stderr, "pthread_create error!\n");
@@ -83,18 +83,18 @@ int main()
     return 0;
 }
 
- //    ŽŠÀíÇëÇóÏß³Ì
+ //    线程处理函数定义
 void *handle_data(void *fd)
 {
-    int choose;                      //œÓÊÕ¿Í»§¶ËµÄÑ¡Ôñ
-    int run;
+    int choose;                      //服务端处理不同请求标识
+    int run;            
     int *c_fd;
       
      run = 1;
      choose = 0;
      c_fd = (int *)fd;
 
-     //****************ŽŠÀí¿Í»§¶ËµÄÇëÇó******************
+     //****************处理客户端请求******************
      while (run)
      {
         if(recv(*c_fd, &choose, sizeof(choose), 0) <= 0)
@@ -105,25 +105,25 @@ void *handle_data(void *fd)
 
         switch(choose)
         {
-          case PUT:                         //ŽŠÀí¿Í»§¶ËÏÂÔØÎÄŒþÇëÇó
+          case PUT:                         //处理客户端下载请求
                    do_put(*c_fd);
                    break;
-          case GET:                         //ŽŠÀí¿Í»§¶ËÉÏŽ«ÎÄŒþÇëÇó
+          case GET:                         //处理客户端上传请求
                    do_get(*c_fd);
                    break;
-          case CD:                          //ŽŠÀí¿Í»§¶ËÇÐ»»Ä¿ÂŒÇëÇó
+          case CD:                          //处理客户端切换目录请求
                    do_cd(*c_fd);
                    break;
-          case LS:                          //ŽŠÀí¿Í»§¶ËÁÐ³öÄ¿ÂŒÄÚÈÝÇëÇó
+          case LS:                          //处理客户端读取目录请求
                    do_ls(*c_fd);
-	               break;
+	           break;
           case PWD:
-                    do_pwd(*c_fd);           //ŽŠÀí¿Í»§¶ËÏÔÊŸµ±Ç°Ä¿ÂŒÇëÇó
+                    do_pwd(*c_fd);           //处理客户端显示当前目录请求
                     break;
-          case BYE:                         //ŽŠÀí¿Í»§¶Ë¶Ï¿ªÁ¬œÓÇëÇó
+          case BYE:                         //处理客户端断开连接请求
           default:
                    run = 0;
-                   break;             //·ÀÖ¹Òì³£ÍË³ö
+                   break;                   //如果没有匹配到请求码，则结束线程
         }
      }
 

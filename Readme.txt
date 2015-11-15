@@ -1,13 +1,14 @@
-file-transfer system based on socket.
+file-transfer system based on socket and thread.
 
-                    基于socket(套接字)的文件传输程序
+                    基于socket(套接字)的多线程文件传输程序
   -----------------------------------------------------------------------------------
               目前测试了一下，支持普通文件，压缩文件，视频文件的传输，丢包率0%...
               还有待测试...
   -----------------------------------------------------------------------------------
 
-           Author:qianghaohao   Date:2015-11
-           Version: v1.0        Copyright:GPL
+           Author:QIANG Hao-hao                     Copyright (C) 2015
+           Version: v1.0, 11 November 2015        License:GPL
+           
 1.功能简介:支持文件下载和上传功能，客户端通过向服务的发送命令，服务端 接收到客户端命令后作出相应的处理. 功能详细列表: User commands:
 
 Example: command -option1 option2 ...
@@ -16,11 +17,11 @@ Example: command -option1 option2 ...
 ------------------------------------------------------------------------------------
     get arg1 arg2        下载文件                     arg1:服务端路径, arg2:本地路径
     put arg1 arg2        上传文件                     arg1:本地路径, arg2:服务端路径
-    !cd arg1             切换到服务端目录             arg1:服务端路径 
-    !ls arg1             列出服务端目录内容           arg1:服务端路径 
+    !cd arg1             切换到服务端目录              arg1:服务端路径 
+    !ls arg1             列出服务端目录内容            arg1:服务端路径 
     connect arg1         连接服务器                   arg1:点分十进制IP地址 
     cd  arg1             切换本地目录                 arg1:本地路径 
-    ls  arg1             列出本地目录文件             arg1:本地路径 
+    ls  arg1             列出本地目录文件              arg1:本地路径 
     pwd                  显示当前本地目录 
     !pwd                 显示当前服务的目录 
     bye                  断开连接 
