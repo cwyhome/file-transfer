@@ -1,4 +1,4 @@
-file-transfer system based on socket.
+file-transfer system based on socket and thread.
 
                     基于socket(套接字)的文件传输程序
   -----------------------------------------------------------------------------------
