@@ -1,39 +1,40 @@
 
 #include "command.h"
-
-void *handle_data(void *fd);  //´¦ÀíÇëÇóÏß³Ì
+#include<errno.h>
+#include <netdb.h>
+void *handle_data(void *fd);  //Å½Å Ã€Ã­Ã‡Ã«Ã‡Ã³ÃÃŸÂ³ÃŒ
 
 int main()
 {
     int res;
-    struct sockaddr_in s_addr, c_addr;     //°üº¬IPºÍ¶Ë¿ÚºÅµÄ½á¹¹
-    int s_fd;            //·şÎñÆ÷ÃèÊö·û
+    struct sockaddr_in s_addr, c_addr;     //Â°Ã¼ÂºÂ¬IPÂºÃÂ¶Ã‹Â¿ÃšÂºÃ…ÂµÃ„Å“Ã¡Â¹Â¹
+    int s_fd;            //Â·Ã¾ÃÃ±Ã†Ã·ÃƒÃ¨ÃŠÃ¶Â·Ã»
 
     int s_len, c_len;
-    int *c_fd;            //¿Í»§¶ËÃèÊö·û
+    int *c_fd;            //Â¿ÃÂ»Â§Â¶Ã‹ÃƒÃ¨ÃŠÃ¶Â·Ã»
 
-     //½á¹¹ÄÚ´æ³õÊ¼»¯
+     //Å“Ã¡Â¹Â¹Ã„ÃšÅ½Ã¦Â³ÃµÃŠÅ’Â»Â¯
     bzero(&s_addr, sizeof(s_addr));
     bzero(&c_addr, sizeof(c_addr));
 
     s_len = sizeof(s_addr);
     c_len = sizeof(c_addr);
 
-    s_addr.sin_family = AF_INET;                    //Ìî³äµØÖ·×å
-    s_addr.sin_port = htons(SOCK_PORT);            //Ìî³ä¶Ë¿ÚºÅ
-    s_addr.sin_addr.s_addr = htonl(INADDR_ANY);    //×Ô¶¯»ñÈ¡±¾µØIPµØÖ·
-    //inet_pton(AF_INET, "127.0.0.1", &s_addr.sin_addr);   //ÊÖ¶¯Ö¸¶¨IPµØÖ·
+    s_addr.sin_family = AF_INET;                    //ÃŒÃ®Â³Ã¤ÂµÃ˜Ã–Â·Ã—Ã¥
+    s_addr.sin_port = htons(SOCK_PORT);            //ÃŒÃ®Â³Ã¤Â¶Ã‹Â¿ÃšÂºÃ…
+    s_addr.sin_addr.s_addr = htonl(INADDR_ANY);    //Ã—Ã”Â¶Â¯Â»Ã±ÃˆÂ¡Â±Å¸ÂµÃ˜IPÂµÃ˜Ã–Â·
+    //inet_pton(AF_INET, "127.0.0.1", &s_addr.sin_addr);   //ÃŠÃ–Â¶Â¯Ã–Å¾Â¶Å¡IPÂµÃ˜Ã–Â·
 
-    s_fd = socket(AF_INET, SOCK_STREAM, 0);                 //½¨Á¢Ì×½Ó×Ö
+    s_fd = socket(AF_INET, SOCK_STREAM, 0);                 //Å“Å¡ÃÂ¢ÃŒÃ—Å“Ã“Ã—Ã–
 
-    res = bind(s_fd, (const struct sockaddr *)&s_addr, s_len);   //   °ó¶¨Ì×½Ó×Ö
+    res = bind(s_fd, (const struct sockaddr *)&s_addr, s_len);   //   Â°Ã³Â¶Å¡ÃŒÃ—Å“Ã“Ã—Ã–
     if(res == -1)
     {
         perror("bind failed!\n");
         exit(1);
     }
 
-    //   ¼àÌıÌ×½Ó×Ö
+    //   Å’Ã ÃŒÃ½ÃŒÃ—Å“Ã“Ã—Ã–
     res = listen(s_fd, MAX_CONN_LIMIT);
     if(res == -1)
      {
@@ -42,7 +43,7 @@ int main()
      }
 
 
-    //***********¼àÌıÌ×½Ó×Ö²¢´´½¨Ïß³Ì****************
+    //***********Å’Ã ÃŒÃ½ÃŒÃ—Å“Ã“Ã—Ã–Â²Â¢Å½Å½Å“Å¡ÃÃŸÂ³ÃŒ****************
     while(1)
     {
         c_fd = (int *)malloc(sizeof(c_fd));
@@ -60,41 +61,43 @@ int main()
             continue;
         }
 
-//        char *IP = inet_ntoa(c_addr.sin_addr);
-//        if (IP != NULL)
-//        printf("USER NAME: %s\n", IP);
-//        else
-//        puts("get IP failed...");
-        pthread_t pth;        //½ø³Ì±êÊ¶
+        char *IP = inet_ntoa(c_addr.sin_addr);     //æ˜¾ç¤ºç”¨æˆ·å
+        if (IP)
+        {
+            printf("USER: %s connected...\n", IP);
+        }
+        else
+        {
+            continue;
+        }
+
+        pthread_t pth;        //Å“Ã¸Â³ÃŒÂ±ÃªÃŠÂ¶
         if (pthread_create(&pth, NULL, handle_data, c_fd))
         {
              fprintf(stderr, "pthread_create error!\n");
              break;
         }
-
     }
 
     close(s_fd);
     return 0;
 }
 
- //    ´¦ÀíÇëÇóÏß³Ì
+ //    Å½Å Ã€Ã­Ã‡Ã«Ã‡Ã³ÃÃŸÂ³ÃŒ
 void *handle_data(void *fd)
 {
-    int choose;                      //½ÓÊÕ¿Í»§¶ËµÄÑ¡Ôñ
+    int choose;                      //Å“Ã“ÃŠÃ•Â¿ÃÂ»Â§Â¶Ã‹ÂµÃ„Ã‘Â¡Ã”Ã±
     int run;
-	int c_fd;
-
+    int *c_fd;
+      
      run = 1;
      choose = 0;
-     c_fd = *(int *)fd;
+     c_fd = (int *)fd;
 
-     printf("USER:%d connected...\n", c_fd);
-
-     //****************´¦Àí¿Í»§¶ËµÄÇëÇó******************
+     //****************Å½Å Ã€Ã­Â¿ÃÂ»Â§Â¶Ã‹ÂµÃ„Ã‡Ã«Ã‡Ã³******************
      while (run)
      {
-        if(recv(c_fd, &choose, sizeof(choose), 0) <= 0)
+        if(recv(*c_fd, &choose, sizeof(choose), 0) <= 0)
         {
              puts("recv error...");
              break;
@@ -102,29 +105,31 @@ void *handle_data(void *fd)
 
         switch(choose)
         {
-          case PUT:                         //´¦Àí¿Í»§¶ËÏÂÔØÎÄ¼şÇëÇó
-                   do_put(c_fd);
+          case PUT:                         //Å½Å Ã€Ã­Â¿ÃÂ»Â§Â¶Ã‹ÃÃ‚Ã”Ã˜ÃÃ„Å’Ã¾Ã‡Ã«Ã‡Ã³
+                   do_put(*c_fd);
                    break;
-          case GET:                         //´¦Àí¿Í»§¶ËÉÏ´«ÎÄ¼şÇëÇó
-                   do_get(c_fd);
+          case GET:                         //Å½Å Ã€Ã­Â¿ÃÂ»Â§Â¶Ã‹Ã‰ÃÅ½Â«ÃÃ„Å’Ã¾Ã‡Ã«Ã‡Ã³
+                   do_get(*c_fd);
                    break;
-          case CD:                          //´¦Àí¿Í»§¶ËÇĞ»»Ä¿Â¼ÇëÇó
-                   do_cd(c_fd);
+          case CD:                          //Å½Å Ã€Ã­Â¿ÃÂ»Â§Â¶Ã‹Ã‡ÃÂ»Â»Ã„Â¿Ã‚Å’Ã‡Ã«Ã‡Ã³
+                   do_cd(*c_fd);
                    break;
-          case LS:                          //´¦Àí¿Í»§¶ËÁĞ³öÄ¿Â¼ÄÚÈİÇëÇó
-                   do_ls(c_fd);
+          case LS:                          //Å½Å Ã€Ã­Â¿ÃÂ»Â§Â¶Ã‹ÃÃÂ³Ã¶Ã„Â¿Ã‚Å’Ã„ÃšÃˆÃÃ‡Ã«Ã‡Ã³
+                   do_ls(*c_fd);
 	               break;
           case PWD:
-                    do_pwd(c_fd);           //´¦Àí¿Í»§¶ËÏÔÊ¾µ±Ç°Ä¿Â¼ÇëÇó
+                    do_pwd(*c_fd);           //Å½Å Ã€Ã­Â¿ÃÂ»Â§Â¶Ã‹ÃÃ”ÃŠÅ¸ÂµÂ±Ã‡Â°Ã„Â¿Ã‚Å’Ã‡Ã«Ã‡Ã³
                     break;
-          case BYE:                         //´¦Àí¿Í»§¶Ë¶Ï¿ªÁ¬½ÓÇëÇó
+          case BYE:                         //Å½Å Ã€Ã­Â¿ÃÂ»Â§Â¶Ã‹Â¶ÃÂ¿ÂªÃÂ¬Å“Ã“Ã‡Ã«Ã‡Ã³
           default:
                    run = 0;
-                   break;             //·ÀÖ¹Òì³£ÍË³ö
+                   break;             //Â·Ã€Ã–Â¹Ã’Ã¬Â³Â£ÃÃ‹Â³Ã¶
         }
      }
 
-     close(c_fd);
+     close(*c_fd);
+     free(c_fd);   //é‡Šæ”¾ä¸»çº¿ç¨‹åŠ¨æ€å†…å­˜
+     c_fd = NULL;
      puts("connection closed...");
      pthread_exit(NULL);
 }

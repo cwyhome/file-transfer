@@ -14,5 +14,8 @@
 # include <dirent.h>
 #include<sys/stat.h>
 #include<fcntl.h>
+#include <arpa/inet.h>
+#include<errno.h>
+#include <netdb.h>
 
 #endif // COMMON_H_INCLUDED
