@@ -13,12 +13,12 @@ unsigned long get_file_size(const char *filename)
 
 int do_get(int sock_fd)
 {
-     int fd;            //ÎÄ¼şÃèÊö·û
-     int ok;           //ÊÇ·ñÖ´ĞĞ³É¹¦±êÖ¾
-     int sent;              //ÊÕ·¢×Ö½ÚÊı
-     char data_send[BUFFER_SIZE];    //·¢ËÍ»º³åÇø
-     char data_recv[BUFFER_SIZE];    //½ÓÊÕ»º³åÇø
-     char filename[MAX_FILENAME];     //ÎÄ¼şÃû
+     int fd;            //æ–‡ä»¶æè¿°ç¬¦
+     int ok;           //æ˜¯å¦æ‰§è¡ŒæˆåŠŸæ ‡å¿—
+     int sent;              //æ”¶å‘å­—èŠ‚æ•°
+     char data_send[BUFFER_SIZE];    //å‘é€ç¼“å†²åŒº
+     char data_recv[BUFFER_SIZE];    //æ¥æ”¶ç¼“å†²åŒº
+     char filename[MAX_FILENAME];     //æ–‡ä»¶å
 
      ok = 0;
      memset(data_send, 0, BUFFER_SIZE);
@@ -31,12 +31,12 @@ int do_get(int sock_fd)
          return -1;
      }
 
-      recv(sock_fd, filename, BUFFER_SIZE, 0);  //¶ÁÈ¡¿Í»§¶Ë·¢ËÍµÄÎÄ¼şÃû
+      recv(sock_fd, filename, BUFFER_SIZE, 0);  //è¯»å–å®¢æˆ·ç«¯å‘é€çš„æ–‡ä»¶å
 
-      // ************ĞÂ½¨²¢´«ÊäÎÄ¼ş***************
+      // ************æ–°å»ºå¹¶ä¼ è¾“æ–‡ä»¶***************
       fd = open(filename, O_RDWR|O_CREAT);
-      //Èç¹ûÊ§°Ü£¬·¢ËÍ¸ø¿Í»§¶Ë×´Ì¬
-      if (fd == -1)                  //´ò¿ª»ò´´½¨ÎÄ¼şÊ§°Ü
+      //å¦‚æœå¤±è´¥ï¼Œå‘é€ç»™å®¢æˆ·ç«¯çŠ¶æ€
+      if (fd == -1)                  //æ‰“å¼€æˆ–åˆ›å»ºæ–‡ä»¶å¤±è´¥
       {
          ok = -1;
          fprintf(stderr, "error on create file.\n");
@@ -46,7 +46,7 @@ int do_get(int sock_fd)
       ok = 1;
       send(sock_fd, &ok, sizeof(ok), 0);
 
-      //    ¿Í»§¶Ë´ò¿ªÎÄ¼ş³É¹¦,Ôò¼ÌĞø´«Êä,·ñÔòÍ£Ö¹´«Êä
+      //    å®¢æˆ·ç«¯æ‰“å¼€æ–‡ä»¶æˆåŠŸ,åˆ™ç»§ç»­ä¼ è¾“,å¦åˆ™åœæ­¢ä¼ è¾“
       recv(sock_fd, &ok, sizeof(ok), 0);
       if (ok != 1)
       {
@@ -54,7 +54,7 @@ int do_get(int sock_fd)
          return -1;
       }
 
-     //  ´ÓÌ×½Ó×Ö¶ÁÈ¡Ò»¶ÎÊı¾İ²¢Ğ´ÈëÎÄ¼ş
+     //  ä»å¥—æ¥å­—è¯»å–ä¸€æ®µæ•°æ®å¹¶å†™å…¥æ–‡ä»¶
      while (1)
      {
         recv(sock_fd, &sent, sizeof(sent), 0);
@@ -67,19 +67,19 @@ int do_get(int sock_fd)
         write(fd, data_recv, sent);
      }
 
-     close(fd);    //¹Ø±ÕÎÄ¼şÃèÊö·û
+     close(fd);    //å…³é—­æ–‡ä»¶æè¿°ç¬¦
      puts("receve file finished....");
      return 0;
 }
 
 int do_put(int sock_fd)
 {
-     int fd;                           //ÎÄ¼şÃèÊö·û
-     unsigned int filesize;          //ÎÄ¼ş´óĞ¡
-     int ok;                        //ÊÇ·ñÖ´ĞĞ³É¹¦±êÖ¾
-     int sent;                      //ÊÕ·¢×Ö½ÚÊı
-     char data_send[BUFFER_SIZE];    //·¢ËÍ»º³åÇø
-     char data_recv[BUFFER_SIZE];    //½ÓÊÕ»º³åÇø
+     int fd;                           //æ–‡ä»¶æè¿°ç¬¦
+     unsigned int filesize;          //æ–‡ä»¶å¤§å°
+     int ok;                        //æ˜¯å¦æ‰§è¡ŒæˆåŠŸæ ‡å¿—
+     int sent;                      //æ”¶å‘å­—èŠ‚æ•°
+     char data_send[BUFFER_SIZE];    //å‘é€ç¼“å†²åŒº
+     char data_recv[BUFFER_SIZE];    //æ¥æ”¶ç¼“å†²åŒº
      char filename[MAX_FILENAME];
      ok = 0;
      filesize = 0;
@@ -93,24 +93,24 @@ int do_put(int sock_fd)
          return -1;
      }
 
-      recv(sock_fd, filename, BUFFER_SIZE, 0);   //»ñÈ¡ÎÄ¼şÃû
+      recv(sock_fd, filename, BUFFER_SIZE, 0);   //è·å–æ–‡ä»¶å
 
-      //   ´ò¿ªÎÄ¼ş×¼±¸´«Êä
+      //   æ‰“å¼€æ–‡ä»¶å‡†å¤‡ä¼ è¾“
       fd = open(filename, O_RDWR);
-      if (fd == -1)                  //´ò¿ªÎÄ¼şÊ§°Ü
+      if (fd == -1)                  //æ‰“å¼€æ–‡ä»¶å¤±è´¥
       {
          fprintf(stderr, "error on open file.\n");
          ok = -1;
          send(sock_fd, &ok, sizeof(ok), 0);
          return -1;
       }
-      ok = 1;                               //±íÊ¾´ò¿ª³É¹¦£¬½«×´Ì¬·¢ËÍ¸ø¿Í»§¶Ë
+      ok = 1;                               //è¡¨ç¤ºæ‰“å¼€æˆåŠŸï¼Œå°†çŠ¶æ€å‘é€ç»™å®¢æˆ·ç«¯
       send(sock_fd, &ok, sizeof(ok), 0);
 
       filesize = get_file_size(filename);
-      send(sock_fd, &filesize, strlen(data_send) + 1, 0);   //·¢ËÍÎÄ¼ş´óĞ¡
+      send(sock_fd, &filesize, sizeof(filesize), 0);   //å‘é€æ–‡ä»¶å¤§å°
 
-      recv(sock_fd, &ok, BUFFER_SIZE, 0);         //½ÓÊÕ¿Í»§¶ËµÄ×´Ì¬
+      recv(sock_fd, &ok, BUFFER_SIZE, 0);         //æ¥æ”¶å®¢æˆ·ç«¯çš„çŠ¶æ€
       if (ok != 1)
       {
          puts("client stop download file...");
@@ -118,7 +118,7 @@ int do_put(int sock_fd)
          return -1;
       }
 
-      while (1)  //ÖğÌõ¶ÁÈ¡ÄÚÈİ²¢Ğ´ÈëÌ×½Ó×Ö  sent:·¢ËÍ×Ö½ÚÊı
+      while (1)  //é€æ¡è¯»å–å†…å®¹å¹¶å†™å…¥å¥—æ¥å­—  sent:å‘é€å­—èŠ‚æ•°
 	  {
           sent = read(fd, data_send, BUFFER_SIZE);
           send(sock_fd, &sent, sizeof(sent), 0);
@@ -136,28 +136,28 @@ int do_cd(int sock_fd)
 
    memset(buff, 0, BUFFER_SIZE);
 
-   recv(sock_fd, buff, BUFFER_SIZE, 0);       //½ÓÊÕÇĞ»»Ä¿Â¼Â·¾¶
+   recv(sock_fd, buff, BUFFER_SIZE, 0);       //æ¥æ”¶åˆ‡æ¢ç›®å½•è·¯å¾„
     if (chdir(buff) < 0)
     {
-        //  ÇëÇó¶ÁÈ¡µÄÄ¿Â¼²»´æÔÚ£¬Ôò¸ø¿Í»§¶Ë·µ»ØÌáÊ¾ĞÅÏ¢
+        //  è¯·æ±‚è¯»å–çš„ç›®å½•ä¸å­˜åœ¨ï¼Œåˆ™ç»™å®¢æˆ·ç«¯è¿”å›æç¤ºä¿¡æ¯
         strcpy(buff, "Maybe path you inputnot exist...");
         send(sock_fd, buff, strlen(buff) + 1, 0);
         return -1;
     }
     else
     {
-         strcpy(buff, getcwd(NULL, NULL));           //»ñÈ¡µ±Ç°Â·¾¶
-         send(sock_fd, buff, strlen(buff) + 1, 0);   // ÇĞ»»ºóµÄÄ¿Â¼ĞÅÏ¢·µ»Ø¸ø¿Í»§¶Ë
+         strcpy(buff, getcwd(NULL, NULL));           //è·å–å½“å‰è·¯å¾„
+         send(sock_fd, buff, strlen(buff) + 1, 0);   // åˆ‡æ¢åçš„ç›®å½•ä¿¡æ¯è¿”å›ç»™å®¢æˆ·ç«¯
          printf("current dir:%s\n", buff);
     }
 
     return 0;
 }
 
-int do_ls(int sock_fd)   //¶ÁÈ¡Ä¿Â¼ÄÚÈİ²¢·¢ËÍµ½Ì×½Ó×Ö
+int do_ls(int sock_fd)   //è¯»å–ç›®å½•å†…å®¹å¹¶å‘é€åˆ°å¥—æ¥å­—
 {
-    int ok;           //Í¨ĞÅ×´Ì¬
-    int sent;        //ÊÕ·¢×Ö½ÚÊı
+    int ok;           //é€šä¿¡çŠ¶æ€
+    int sent;        //æ”¶å‘å­—èŠ‚æ•°
     DIR *dir;
 	struct dirent *ptr;
     char data_send[BUFFER_SIZE];
@@ -166,18 +166,18 @@ int do_ls(int sock_fd)   //¶ÁÈ¡Ä¿Â¼ÄÚÈİ²¢·¢ËÍµ½Ì×½Ó×Ö
      ok = 0;
      bzero(path, MAX_FILENAME);
 
-     recv(sock_fd, path, MAX_FILENAME, 0);    //»ñÈ¡Ä¿Â¼Ãû
+     recv(sock_fd, path, MAX_FILENAME, 0);    //è·å–ç›®å½•å
 
       if((dir = opendir(path)) == NULL)
       {
            ok = -1;
-           send(sock_fd, &ok, sizeof(ok), 0);    //·¢ËÍ×´Ì¬
+           send(sock_fd, &ok, sizeof(ok), 0);    //å‘é€çŠ¶æ€
            return -1;
       }
       ok = 1;
-      send(sock_fd, &ok, sizeof(ok), 0);    //·¢ËÍ×´Ì¬
+      send(sock_fd, &ok, sizeof(ok), 0);    //å‘é€çŠ¶æ€
 
-      while (1)  //ÖğÌõ¶ÁÈ¡Ä¿Â¼ÄÚÈİ²¢Ğ´ÈëÌ×½Ó×Ö  sent:·¢ËÍ×Ö½ÚÊı
+      while (1)  //é€æ¡è¯»å–ç›®å½•å†…å®¹å¹¶å†™å…¥å¥—æ¥å­—  sent:å‘é€å­—èŠ‚æ•°
 	  {
           ptr = readdir(dir);
           if(ptr == NULL)  sent = 0;
@@ -188,16 +188,16 @@ int do_ls(int sock_fd)   //¶ÁÈ¡Ä¿Â¼ÄÚÈİ²¢·¢ËÍµ½Ì×½Ó×Ö
           puts(data_send);
           send(sock_fd, data_send, sent, 0);
       }
-      closedir(dir);                        //¹Ø±ÕÄ¿Â¼¾ä±ú
+      closedir(dir);                        //å…³é—­ç›®å½•å¥æŸ„
       printf("End ls from %d\n", sock_fd);
       return 0;
 }
 
-int do_pwd(int sock_fd)                     //ÏÔÊ¾±¾µØµ±Ç°Â·¾¶
+int do_pwd(int sock_fd)                     //æ˜¾ç¤ºæœ¬åœ°å½“å‰è·¯å¾„
 {
      char dir[BUFFER_SIZE];
      printf("current dir: %s\n", getcwd(NULL, NULL));
-     strcpy(dir, getcwd(NULL, NULL));          //»ñÈ¡·şÎñ¶Ëµ±Ç°Ä¿Â¼
-     send(sock_fd, dir, strlen(dir) + 1, 0);   //·¢ËÍ·şÎñ¶Ëµ±Ç°Ä¿Â¼
+     strcpy(dir, getcwd(NULL, NULL));          //è·å–æœåŠ¡ç«¯å½“å‰ç›®å½•
+     send(sock_fd, dir, strlen(dir) + 1, 0);   //å‘é€æœåŠ¡ç«¯å½“å‰ç›®å½•
      return 0;
 }
