@@ -9,11 +9,9 @@ int main()
     int res;
     struct sockaddr_in s_addr, c_addr;
     int s_fd;            //服务端套接字描述符
-
     int s_len, c_len;
-    int *c_fd;            //客户端描述符指针
-
-     //结构内存清零
+    int c_fd;            //客户的描述符号
+      //结构内存清零
     bzero(&s_addr, sizeof(s_addr));
     bzero(&c_addr, sizeof(c_addr));
 
@@ -42,20 +40,12 @@ int main()
          exit(1);
      }
 
-
     //************服务端循环监听***************
     while(1)
     {
-        c_fd = (int *)malloc(sizeof(c_fd));
-        if (c_fd == NULL)
-        {
-            puts("malloc memory failed...");
-            exit(-1);
-        }
-
         printf(">>:servert started,waiting for new connection...\n");
-        *c_fd = accept(s_fd, (struct sockaddr *)&c_addr, &c_len);
-        if(*c_fd < 0)
+        c_fd = accept(s_fd, (struct sockaddr *)&c_addr, &c_len);
+        if(c_fd < 0)
         {
             fprintf(stderr, "accept error...\n");
             continue;
@@ -72,7 +62,7 @@ int main()
         }
 
         pthread_t pth;        //线程标识
-        if (pthread_create(&pth, NULL, handle_data, c_fd))
+        if (pthread_create(&pth, NULL, handle_data, &c_fd))
         {
              fprintf(stderr, "pthread_create error!\n");
              break;
@@ -88,37 +78,36 @@ void *handle_data(void *fd)
 {
     int choose;                      //服务端处理不同请求标识
     int run;            
-    int *c_fd;
-      
+    int c_fd;  
      run = 1;
      choose = 0;
-     c_fd = (int *)fd;
+     c_fd = *((int *)fd);
 
      //****************处理客户端请求******************
      while (run)
      {
-        if(recv(*c_fd, &choose, sizeof(choose), 0) <= 0)
-        {
-             puts("recv error...");
-             break;
-        }
 
-        switch(choose)
+        if ((recv(c_fd, &choose, sizeof(choose), 0)) < 0)
         {
+            continue;
+        } 
+
+      switch(choose) 
+      { 
           case PUT:                         //处理客户端下载请求
-                   do_put(*c_fd);
+                   do_put(c_fd);
                    break;
           case GET:                         //处理客户端上传请求
-                   do_get(*c_fd);
+                   do_get(c_fd);
                    break;
           case CD:                          //处理客户端切换目录请求
-                   do_cd(*c_fd);
+                   do_cd(c_fd);
                    break;
           case LS:                          //处理客户端读取目录请求
-                   do_ls(*c_fd);
+                   do_ls(c_fd);
 	           break;
           case PWD:
-                    do_pwd(*c_fd);           //处理客户端显示当前目录请求
+                    do_pwd(c_fd);           //处理客户端显示当前目录请求
                     break;
           case BYE:                         //处理客户端断开连接请求
           default:
@@ -127,9 +116,7 @@ void *handle_data(void *fd)
         }
      }
 
-     close(*c_fd);
-     free(c_fd);   //释放主线程动态内存
-     c_fd = NULL;
+     close(c_fd);
      puts("connection closed...");
      pthread_exit(NULL);
 }

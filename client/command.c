@@ -204,10 +204,12 @@ int do_get(const char *src, const char *dst, int sock_fd) //从远端服务器下载文件
      int fd;              //文件描述符
      int ok;              //是否执行成功标志
      int sent;            //收发字节数
-     unsigned int filesize;       //文件大小
+     float filesize_KB;
+     unsigned int filesize_B;       //文件大小
      char data_send[BUFFER_SIZE];
      char data_recv[BUFFER_SIZE];
 
+     struct timeval timeout = {1, 0};
      ok = 0;
      bzero(data_send, BUFFER_SIZE);
      bzero(data_recv, BUFFER_SIZE);
@@ -236,15 +238,15 @@ int do_get(const char *src, const char *dst, int sock_fd) //从远端服务器下载文件
          return -1;
      }
 
-     recv(sock_fd, &filesize, sizeof(filesize), 0);  //获取文件大小,单位为字节
-
+     recv(sock_fd, &filesize_B, sizeof(filesize_B), 0);  //获取文件大小,单位为字节
+     filesize_KB = filesize_B / 1000.0; 
           //  打印文件信息
      printf("-----------------------------------------------------------\n");
-     printf("\t%s\t\t\t\t| %.3fKB\n", src, filesize / 1000.0);
+     printf("\t%s\t\t\t\t| %.3fKB\n", src, filesize_KB);
      printf("-----------------------------------------------------------\n\n");
-     printf("Total download size:%.3fKB\n", filesize / 1000.0);
+     printf("Total download size:%.3fKB\n", filesize_KB);
 
-     if (filesize / 1000.0 > MAX_FILE_SIZE)      //如果文件太大，则取消接收
+     if (filesize_KB > MAX_FILE_SIZE)      //如果文件太大，则取消接收
      {
          ok = -1;
          puts("Sory, the file is too large.");
@@ -261,19 +263,18 @@ int do_get(const char *src, const char *dst, int sock_fd) //从远端服务器下载文件
         fprintf(stderr, "error on create file.\n");
         return -1;
      }
+     
+	 //  设置超时时延 时间为1秒 struct timeval tmimeout
+     setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
 
-     //  从套接字读取一段数据并写入文件
-     while (1)
+     while ((sent = recv(sock_fd, data_recv, BUFFER_SIZE, 0)) > 0)
      {
-        recv(sock_fd, &sent, sizeof(sent), 0);
-        if(sent == 0)
-        {
-           break;
-        }
-        recv(sock_fd, data_recv, sent,0);
-        data_recv[sent] = 0;
-        write(fd, data_recv, sent);
+          if (write(fd, data_recv, sent) < 0)
+          {
+               return -1;
+          }
      }
+     
      close(fd);
      printf("Download  finished...\n");
      return 0;
@@ -327,14 +328,10 @@ int do_put(const char *src, const char *dst, int sock_fd) //向远端服务器上传文件
      ok = 1;
      send(sock_fd, &ok, sizeof(ok), 0);   //发送客户端状态
 
-       // 4.开始传输文件
-      while (1)  //逐条读取内容并写入套接字  sent:发送字节数
-	  {
-          sent = read(fd, data_send, BUFFER_SIZE);
-          send(sock_fd, &sent, sizeof(sent), 0);
-          if(sent == 0)   break;
-          send(sock_fd, data_send, sent, 0);
-      }
+     while ((sent = read(fd, data_send, BUFFER_SIZE)) > 0)
+     {
+           send(sock_fd, data_send, sent, 0);
+     }
 
      close(fd);   //关闭文件描述符
      printf("upload finished...\n");
@@ -343,7 +340,7 @@ int do_put(const char *src, const char *dst, int sock_fd) //向远端服务器上传文件
 
 int do_pwd()                     //显示本地当前路径
 {
-     printf("current client dir: %s\n", getcwd(NULL, NULL));
+     printf("current client dir: %s\n", getcwd((char *)NULL, 0));
      return 0;
 }
 

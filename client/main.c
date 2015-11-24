@@ -20,8 +20,8 @@ int main()
       //  判断输入命令是否为空
       if (cmd.name == NULL)
       {
-         printf("you must input command!\n");
-         return -1;
+         printf("no command...\n");
+         continue;
       }
 
       switch(matchcmd(cmd.name))
