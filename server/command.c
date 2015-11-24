@@ -140,7 +140,7 @@ int do_cd(int sock_fd)
     }
     else
     {
-         strcpy(buff, getcwd((char *)NULL, 1));           //获取当前路径
+         strcpy(buff, getcwd((char *)NULL, 0));           //获取当前路径
          send(sock_fd, buff, strlen(buff) + 1, 0);   //发送当前路径
          printf("current dir:%s\n", buff);
     }
